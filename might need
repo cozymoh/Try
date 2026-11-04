@@ -1,0 +1,100 @@
+clc;
+clear;
+
+n = input('Enter matrix size: ');
+
+A = [];
+
+% Read matrix elements
+for i = 1:n
+    for j = 1:n
+        A(i,j) = input('Enter element: ');
+    end
+end
+
+% Create augmented matrix [A | I]
+Aug = [];
+
+for i = 1:n
+    for j = 1:2*n
+
+        if j <= n
+            Aug(i,j) = A(i,j);
+
+        elseif j-n == i
+            Aug(i,j) = 1;
+
+        else
+            Aug(i,j) = 0;
+        end
+
+    end
+end
+
+% Gauss-Jordan elimination
+for i = 1:n
+
+    % Find largest absolute pivot
+    maxrow = i;
+
+    for k = i+1:n
+        if abs(Aug(k,i)) > abs(Aug(maxrow,i))
+            maxrow = k;
+        end
+    end
+
+    % Check for singular matrix
+    if abs(Aug(maxrow,i)) < 1e-10
+        disp('Matrix has no inverse.');
+        return;
+    end
+
+    % Swap rows if necessary
+    if maxrow ~= i
+
+        for j = 1:2*n
+            temp = Aug(i,j);
+            Aug(i,j) = Aug(maxrow,j);
+            Aug(maxrow,j) = temp;
+        end
+
+    end
+
+    % Normalize pivot row
+    pivot = Aug(i,i);
+
+    for j = 1:2*n
+        Aug(i,j) = Aug(i,j)/pivot;
+    end
+
+    % Eliminate other rows
+    for k = 1:n
+
+        if k ~= i
+
+            factor = Aug(k,i);
+
+            for j = 1:2*n
+                Aug(k,j) = Aug(k,j) - factor*Aug(i,j);
+            end
+
+        end
+
+    end
+
+end
+
+% Extract inverse
+Inv = [];
+
+for i = 1:n
+    for j = 1:n
+        Inv(i,j) = Aug(i,j+n);
+    end
+end
+
+disp('Original Matrix:');
+disp(A);
+
+disp('Inverse Matrix:');
+disp(Inv);
