@@ -1,0 +1,62 @@
+clc;
+clear;
+n=3;
+a=[];
+for i=1:n
+for j=1:n
+a(i,j)=input('enter element: ');
+end
+end
+aug=[];
+for i=1:n
+for j=1:2*n
+if j<=n
+aug(i,j)=a(i,j);
+elseif j-n==i
+aug(i,j)=1;
+else
+aug(i,j)=0;
+end
+end
+end
+for i=1:n
+maxrow=i;
+for k=i+1:n
+if abs(aug(k,i))>abs(aug(maxrow,i))
+maxrow=k;
+end
+end
+if abs(aug(maxrow,i))<1e-10
+disp('matrix has no inverse');
+return;
+end
+if maxrow~=i
+for j=1:2*n
+temp=aug(i,j);
+aug(i,j)=aug(maxrow,j);
+aug(maxrow,j)=temp;
+end
+end
+pivot=aug(i,i);
+for j=1:2*n
+aug(i,j)=aug(i,j)/pivot;
+end
+for k=1:n
+if k~=i
+factor=aug(k,i);
+for j=1:2*n
+aug(k,j)=aug(k,j)-factor*aug(i,j);
+end
+end
+end
+end
+inv=[];
+for i=1:n
+for j=1:n
+inv(i,j)=aug(i,j+n);
+end
+end
+disp('original matrix:');
+disp(a);
+disp('inverse matrix:');
+disp(inv);
